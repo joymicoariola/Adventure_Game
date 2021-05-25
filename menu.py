@@ -1,4 +1,5 @@
 import pygame
+import requests
 
 
 class Menu:
@@ -34,12 +35,12 @@ class MainMenu(Menu):
         """ Displays the menu """
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            self.game.check_events_pregame()
             self.check_input()
             self.game.display.fill(self.game.BLACK)
-            self.game.draw_text('Adventure Game', 40, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
-            self.game.draw_text("Start Game", 20, self.start_x, self.start_y)
-            self.game.draw_text("Options", 20, self.options_x, self.options_y)
+            self.game.draw_text(self.game.text_archive.main_title, 40, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
+            self.game.draw_text(self.game.text_archive.main_start, 20, self.start_x, self.start_y)
+            self.game.draw_text(self.game.text_archive.main_options, 20, self.options_x, self.options_y)
             self.draw_cursor()
             self.blit_screen()
 
@@ -83,12 +84,12 @@ class OptionsMenu(Menu):
         """ Displays the options menu """
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            self.game.check_events_pregame()
             self.check_input()
             self.game.display.fill((0, 0, 0))
-            self.game.draw_text('Options', 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
-            self.game.draw_text("Difficulty Level", 20, self.diff_x, self.diff_y)
-            self.game.draw_text("Languages", 20, self.lang_x, self.lang_y)
+            self.game.draw_text(self.game.text_archive.option_title, 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
+            self.game.draw_text(self.game.text_archive.option_diff, 20, self.diff_x, self.diff_y)
+            self.game.draw_text(self.game.text_archive.option_lang, 20, self.lang_x, self.lang_y)
             self.draw_cursor()
             self.blit_screen()
 
@@ -125,18 +126,22 @@ class LanguagesMenu(Menu):
         """ Displays the languages menu """
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            self.game.check_events_pregame()
             self.check_input()
             self.game.display.fill((0, 0, 0))
-            self.game.draw_text('Languages', 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
-            self.game.draw_text("English", 20, self.eng_x, self.eng_y)
-            self.game.draw_text("Spanish", 20, self.spn_x, self.spn_y)
+            self.game.draw_text(self.game.text_archive.display_lang, 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
+            self.game.draw_text(self.game.text_archive.display_eng, 20, self.eng_x, self.eng_y)
+            self.game.draw_text(self.game.text_archive.display_spn, 20, self.spn_x, self.spn_y)
             if self.game.english_yes:
                 self.game.draw_text('Language set to English', 20, self.game.DISPLAY_WIDTH / 2,
                                     self.game.DISPLAY_HEIGHT / 2 - 90)
+                self.game.text_archive.reset()
+                self.game.english_yes = False
             elif self.game.spanish_yes:
-                self.game.draw_text('Language set to Spanish', 20, self.game.DISPLAY_WIDTH / 2,
-                                    self.game.DISPLAY_HEIGHT / 2 - 90)
+                self.game.draw_text(self.game.text_archive.display_set, 20, self.game.DISPLAY_WIDTH / 2,
+                                    self.game.DISPLAY_HEIGHT / 2 - 90)               # Language set to Spanish
+                self.game.text_archive.spanish()
+                self.game.spanish_yes = False
             self.draw_cursor()
             self.blit_screen()
 
@@ -155,10 +160,8 @@ class LanguagesMenu(Menu):
         if self.game.START_KEY:
             if self.state == 'English':
                 self.game.english_yes = True
-                self.game.spanish_yes = False
             elif self.state == 'Spanish':
                 self.game.spanish_yes = True
-                self.game.english_yes = False
             self.run_display = False
 
 
@@ -175,12 +178,12 @@ class DifficultyLevelMenu(Menu):
         """ Displays the difficulty menu """
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            self.game.check_events_pregame()
             self.check_input()
             self.game.display.fill((0, 0, 0))
-            self.game.draw_text('Difficulty Level', 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
-            self.game.draw_text("Casual", 20, self.casual_x, self.casual_y)
-            self.game.draw_text("Experienced", 20, self.exp_x, self.exp_y)
+            self.game.draw_text(self.game.text_archive.diff_lvl, 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
+            self.game.draw_text(self.game.text_archive.casual, 20, self.casual_x, self.casual_y)
+            self.game.draw_text(self.game.text_archive.experienced, 20, self.exp_x, self.exp_y)
             self.draw_cursor()
             self.blit_screen()
 
@@ -211,13 +214,13 @@ class TutorialMenu(Menu):
         """ Displays the tutorial menu """
         self.run_display = True
         while self.run_display:
-            self.game.check_events()
+            self.game.check_events_pregame()
             self.check_input()
             self.game.display.fill((0, 0, 0))
-            self.game.draw_text('You are new here! Do you want to be shown how to play?', 17, self.game.DISPLAY_WIDTH/2,
+            self.game.draw_text(self.game.text_archive.tutorial_menu, 17, self.game.DISPLAY_WIDTH/2,
                                 self.game.DISPLAY_HEIGHT/2 - 30)
-            self.game.draw_text("Yes", 20, self.yes_x, self.yes_y)
-            self.game.draw_text("No", 20, self.no_x, self.no_y)
+            self.game.draw_text(self.game.text_archive.tutorial_yes, 20, self.yes_x, self.yes_y)
+            self.game.draw_text(self.game.text_archive.tutorial_no, 20, self.no_x, self.no_y)
             self.draw_cursor()
             self.blit_screen()
 
@@ -242,4 +245,27 @@ class TutorialMenu(Menu):
                 self.game.playing = True
             self.run_display = False
 
+class TutorialEndMenu(Menu):
+    """ Initializes the dialogue/next level screen once tutorial is completed """
+    def __init__(self, game):
+        Menu.__init__(self, game)
 
+    def display_menu(self):
+        """ Displays the lake menu dialogue/level screen """
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events_pregame()
+            self.check_input()
+            self.game.display.fill((0, 0, 0))
+            self.game.display.fill(self.game.BLACK)
+            self.game.draw_text(self.game.text_archive.lake_text_1, 20,
+                                self.game.DISPLAY_WIDTH / 2, self.game.DISPLAY_HEIGHT / 2 - 10)
+            self.game.draw_text(self.game.text_archive.lake_text_2, 20,
+                                self.game.DISPLAY_WIDTH / 2, self.game.DISPLAY_HEIGHT / 2 + 20)
+            self.draw_cursor()
+            self.blit_screen()
+
+    def check_input(self):
+        """ Checks player input """
+        if self.game.START_KEY:
+            pass
