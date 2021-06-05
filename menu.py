@@ -3,7 +3,6 @@ import requests
 
 
 class Menu:
-    """ Creates menu """
     def __init__(self, game):
         self.game = game
         self.mid_width, self.mid_height = self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2
@@ -12,11 +11,9 @@ class Menu:
         self.offset = -100
 
     def draw_cursor(self):
-        """ Helper function """
         self.game.draw_text('>', 15, self.cursor_rect.x, self.cursor_rect.y)
 
     def blit_screen(self):
-        """ Helper function """
         self.game.window.blit(self.game.display, (0, 0))
         pygame.display.update()
         self.game.reset_keys()
@@ -32,7 +29,6 @@ class MainMenu(Menu):
         self.cursor_rect.midtop = (self.start_x + self.offset, self.start_y)        # initial position for the cursor
 
     def display_menu(self):
-        """ Displays the menu """
         self.run_display = True
         while self.run_display:
             self.game.check_events_pregame()
@@ -45,7 +41,6 @@ class MainMenu(Menu):
             self.blit_screen()
 
     def move_cursor(self):
-        """ Helper function """
         if self.game.DOWN_KEY:
             if self.state == 'Start':
                 self.cursor_rect.midtop = (self.options_x + self.offset, self.options_y)
@@ -72,7 +67,6 @@ class MainMenu(Menu):
 
 
 class OptionsMenu(Menu):
-    """ Initializes options menu """
     def __init__(self, game):
         Menu.__init__(self, game)
         self.state = 'Difficulty Level'
@@ -184,6 +178,12 @@ class DifficultyLevelMenu(Menu):
             self.game.draw_text(self.game.text_archive.diff_lvl, 30, self.game.DISPLAY_WIDTH/2, self.game.DISPLAY_HEIGHT/2 - 30)
             self.game.draw_text(self.game.text_archive.casual, 20, self.casual_x, self.casual_y)
             self.game.draw_text(self.game.text_archive.experienced, 20, self.exp_x, self.exp_y)
+            if self.game.casual_yes:
+                self.game.draw_text(self.game.text_archive.casual_prompt, 20, self.game.DISPLAY_WIDTH / 2,
+                                    self.game.DISPLAY_HEIGHT / 2 - 90)
+            elif self.game.experienced_yes:
+                self.game.draw_text(self.game.text_archive.experienced_prompt, 20, self.game.DISPLAY_WIDTH / 2,
+                                    self.game.DISPLAY_HEIGHT / 2 - 90)
             self.draw_cursor()
             self.blit_screen()
 
@@ -192,6 +192,8 @@ class DifficultyLevelMenu(Menu):
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
+            self.game.experienced_yes = False
+            self.game.casual_yes = False
         elif self.game.UP_KEY or self.game.DOWN_KEY:
             if self.state == 'Casual':
                 self.state = 'Experienced'
@@ -199,6 +201,16 @@ class DifficultyLevelMenu(Menu):
             elif self.state == 'Experienced':
                 self.state = 'Casual'
                 self.cursor_rect.midtop = (self.casual_x + self.offset, self.casual_y)
+        if self.game.START_KEY:
+            if self.state == 'Casual':
+                self.game.diff_experienced = False
+                self.game.casual_yes = True
+                self.game.experienced_yes = False
+            elif self.state == 'Experienced':
+                self.game.diff_experienced = True
+                self.game.experienced_yes = True
+                self.game.casual_yes = False
+            self.run_display = False
 
 
 class TutorialMenu(Menu):

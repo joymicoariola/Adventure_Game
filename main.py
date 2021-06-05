@@ -1,7 +1,4 @@
-import pygame
-import requests
 from game import *
-from menu import *
 
 g = Game()
 
