@@ -10,4 +10,6 @@ UP: moves cursor up
 
 DOWN: moves cursor down 
 
+I have recently created a video showcasing my project as well at its capabilities found here: https://www.youtube.com/watch?v=MqFF9k55ugI
+
 Thank you for playing :-) 
